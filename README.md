@@ -30,7 +30,12 @@ so `watch` can only see movement that happens while it is running, and a race ho
 the jump barely moves. Run it while the Australian card is live. Asking the API for the
 next 24 hours on 2026-09-15 returned 208 Australian races — 138 greyhound, 41 harness,
 29 thoroughbred — running from 11:38 to 22:57 AEST, so that is the window worth polling
-in. Outside it you will watch a flat market.
+in. Outside it you will watch a flat market: a three-minute run against a race an hour
+and a half out returns a table of `+0.00%` rows, correctly.
+
+If you are reading this outside Australian racing hours, skip to
+[See a full race end to end, offline](#see-a-full-race-end-to-end-offline). This repo
+commits a real captured race you can render immediately, with no key and no network.
 
 ### Real output, keyless
 
