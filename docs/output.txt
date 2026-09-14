@@ -1,0 +1,255 @@
+racing-price-movement-tracker - captured terminal output
+========================================================
+
+Every block below is real, unedited output from pricemove.py in this repository.
+Nothing is hand-written, reordered or invented. The only thing removed is the API
+key itself, which the tool reads from the PE_API_KEY environment variable and
+never prints.
+
+Machine:  macOS (darwin 24.6.0), Python 3.9.6, no third-party packages installed.
+Clock:    local time is AEST (UTC+10), so the UTC date is one day behind the
+          local date for these late-evening-UTC runs.
+
+Runs were made on 2026-09-14 23:31-23:44 UTC, which is 2026-09-15 09:31-09:44
+AEST - before the Australian card opened for the day (first Australian race that
+day was 11:38 AEST). That timing is visible in the results below and is the
+honest reason the Australian movers scan returns nothing.
+
+========================================================================
+1. KEYLESS - no API key, no account, 0 credits
+   python3 pricemove.py watch --interval 25 --minutes 11
+
+   Polls /v1/demo/racing/next-to-go and builds its own price series from the
+   snapshots. The two 429s partway through are real: other testing from this
+   same IP tripped the demo endpoint's 30-request/min per-IP limit while the
+   watch was running, and the client backed off and recovered.
+========================================================================
+
+Polling https://api.puntersedge.online/v1/demo/racing/next-to-go every 25s for 11 minute(s).
+No API key, 0 credits. The demo endpoint allows 30 requests/min per IP.
+Ctrl-C stops early and still prints the table.
+
+demo note: Free sandbox sample (truncated). Get a free API key for full data: https://puntersedge.online/api?utm_source=demo_api&utm_medium=sandbox
+
+poll 1   23:33:12Z  Angle Park R1  2.1h to jump  ·  15 prices recorded  ·  173 ms
+poll 2   23:33:37Z  Angle Park R1  2.1h to jump  ·  0 price changes  ·  48 ms
+poll 3   23:34:03Z  Angle Park R1  2.1h to jump  ·  5 price changes  ·  1065 ms
+poll 4   23:34:28Z  Angle Park R1  2.1h to jump  ·  0 price changes  ·  38 ms
+poll 5   23:34:53Z  Angle Park R1  2.1h to jump  ·  0 price changes  ·  40 ms
+poll 6   23:35:18Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  51 ms
+poll 7   23:35:43Z  Angle Park R1  2.0h to jump  ·  4 price changes  ·  71 ms
+poll 8   23:36:08Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  41 ms
+rate limited (429), waiting 3s
+rate limited (429), waiting 6s
+poll 9   23:36:42Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  52 ms
+rate limited (429), waiting 3s
+poll 10  23:37:11Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  59 ms
+poll 11  23:37:36Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  229 ms
+poll 12  23:38:01Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  88 ms
+poll 13  23:38:26Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  52 ms
+poll 14  23:38:51Z  Angle Park R1  2.0h to jump  ·  3 price changes  ·  62 ms
+rate limited (429), waiting 3s
+rate limited (429), waiting 6s
+rate limited (429), waiting 12s
+rate limited (429), waiting 24s
+poll 15  23:40:01Z  Angle Park R1  2.0h to jump  ·  6 price changes  ·  49 ms
+poll 16  23:40:27Z  Angle Park R1  2.0h to jump  ·  0 price changes  ·  91 ms
+poll 17  23:40:52Z  Angle Park R1  2.0h to jump  ·  5 price changes  ·  34 ms
+poll 18  23:41:17Z  Angle Park R1  1.9h to jump  ·  0 price changes  ·  40 ms
+poll 19  23:41:42Z  Angle Park R1  1.9h to jump  ·  1 price change  ·  67 ms
+rate limited (429), waiting 3s
+rate limited (429), waiting 6s
+poll 20  23:42:17Z  Angle Park R1  1.9h to jump  ·  0 price changes  ·  62 ms
+poll 21  23:42:42Z  Angle Park R1  1.9h to jump  ·  3 price changes  ·  53 ms
+poll 22  23:43:07Z  Angle Park R1  1.9h to jump  ·  0 price changes  ·  43 ms
+poll 23  23:43:32Z  Angle Park R1  1.9h to jump  ·  0 price changes  ·  45 ms
+poll 24  23:43:57Z  Angle Park R1  1.9h to jump  ·  3 price changes  ·  46 ms
+
+24 poll(s), 45 point(s) collected.
+
+Angle Park R1  (greyhound, AU)
+race_id   e79e50b1-bc25-4d1d-976c-6b34d0b6426c
+jump      2026-09-15T01:38:00Z
+window    from 2.1h to 1.9h before the jump  (11m observed)
+source    /v1/demo/racing/next-to-go (keyless, 0 credits, polled by this tool)
+
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (polled window)
+------------------------------------------------------------------------------------------------------------------
+2   Sandy Knuckles    7    4.60   5.00   5.00   4.60    +8.70  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▆▆▆▆▆▅▅▅████████████
+1   Alia Rose         6*  13.50  14.00  14.00  13.00    +3.70  drifting ███▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████████████
+4   Adhana Remi       9*   3.00   3.00   3.00   2.90    +0.00  steady   ███████████████████████████████████████▁
+5   Whiplash Emmett   8*  26.00  26.00  29.00  26.00    +0.00  steady   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+7   Twitching         5*   2.25   2.25   2.25   2.20    +0.00  steady   ███████████████████████████████████████▁
+
+* = at least half this runner's books posted a single price only. A book with one
+    observation reports a 0.00% move by construction, so it neither confirms nor
+    denies a move. 4 of 5 rows are flagged.
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+SVG chart written to docs/demo-watch.svg
+Normalised series written to docs/demo-watch.json
+
+========================================================================
+2. KEYED - full price history for one Australian race (5 credits)
+   Hamilton R8, an AU thoroughbred race that jumped 2026-09-14 07:00 UTC.
+   This produced docs/hamilton-r8.svg and docs/hamilton-r8.json.
+========================================================================
+
+$ export PE_API_KEY=...            # never echoed, never committed
+$ python3 pricemove.py race --race-id b4b126d9-24a6-4121-9a92-b40dc389a74a \
+      --svg docs/hamilton-r8.svg --json docs/hamilton-r8.json
+fetched in 189 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+Hamilton R8  (horse, AU)
+race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
+jump      2026-09-14T07:00:00Z
+window    from 60m to 9s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+points    1105
+
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (open -> jump)
+-----------------------------------------------------------------------------------------------------------------
+11  Frosty Night     14   23.00  34.00  41.00  21.00   +47.83  drifting ▂▂▄▄▄▄▄▄▄▄▄▄▄▄▁▂▂▂▂▂▂▁▁▁▆▄▄▄▄▃▂▇▆█▄▄▄▆██
+1   Strongside       14   10.00  14.00  15.00   9.00   +40.00  drifting ▂▂▄▂▂▂▂▂▂▂▂▂▂▂▄▄▄▄▄▄▄▂▂▁▂▄▂▂▂▂▂▂▂▄▂▄▄▅██
+12  State Of Maine   14   16.00  22.00  26.00  15.00   +37.50  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▂▂▂▂▄▄▃▃▄▄▅▆▅▄▆▆███
+8   Brroosha         14    9.00  11.00  13.00   8.50   +22.22  drifting ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▄▄▃▄▄▆▄▅▆▄█▆▄▅▆▄▆
+13  Suenami Rose     14  126.00 151.00 201.00 126.00   +19.84  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▅▁▁▁▅▃▅▅▅▅▅▁▅▁█▅▅▅▅
+3   Royal Heritage   14    6.75   5.50   7.50   5.50   -18.52  firming  ██▅█████████████████▆▃▃▁▁▃▃▃▄▆▆▆▃▃▁▅▆▃▁▁
+6   Share The Stars  14    3.50   3.20   3.70   2.80    -8.57  firming  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇████████▇▇█▇█▇█▇▇▆▄▆▃▁▃▃▄
+10  Racey Casey      14    3.30   3.50   3.80   3.00    +6.06  drifting ▃▃▃▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▆▇█▆▃▃▃▁▃▃▂▂▃▄▆▇▅▆▅
+9   Popthebubbly     14   18.00  19.00  23.00  17.00    +5.56  drifting ▃▃▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▆▅▁▁▅▅▅▅▅▅▅▅▅▃▅█▃▃▆▅
+4   Alcoshare        14    8.50   8.50   9.50   7.50    +0.00  steady   ▃▃▃████████▁▁▁▁▁▁▁▁▁▃▃▃▃▃▁▆▃▃▆▃▂▆▆▁▁▁▁▆▃
+7   Astrodean         4*  11.00  11.00  11.00  11.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+2   Min Kiata         4*  11.50  11.50  12.00  11.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+5   Parkrun          14   21.00  21.00  26.00  13.00    +0.00  steady   █████████████████████▅▂▃▂▁▂▂▂▅▅▅▂▂▃▃▅▅▇█
+14  Stellar Madame    4*  81.00  81.00  91.00  81.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+
+* = at least half this runner's books posted a single price only. A book with one
+    observation reports a 0.00% move by construction, so it neither confirms nor
+    denies a move. 3 of 14 rows are flagged.
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+SVG chart written to docs/hamilton-r8.svg
+Normalised series written to docs/hamilton-r8.json
+
+========================================================================
+2b. OFFLINE - re-rendering the saved series, no network, no key, 0 credits
+   This is the block quoted in the README.
+========================================================================
+
+$ python3 pricemove.py render docs/hamilton-r8.json
+
+Hamilton R8  (horse, AU)
+race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
+jump      2026-09-14T07:00:00Z
+window    from 60m to 9s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+points    1105
+
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (open -> jump)
+-----------------------------------------------------------------------------------------------------------------
+11  Frosty Night     14   23.00  34.00  41.00  21.00   +47.83  drifting ▂▂▄▄▄▄▄▄▄▄▄▄▄▄▁▂▂▂▂▂▂▁▁▁▆▄▄▄▄▃▂▇▆█▄▄▄▆██
+1   Strongside       14   10.00  14.00  15.00   9.00   +40.00  drifting ▂▂▄▂▂▂▂▂▂▂▂▂▂▂▄▄▄▄▄▄▄▂▂▁▂▄▂▂▂▂▂▂▂▄▂▄▄▅██
+12  State Of Maine   14   16.00  22.00  26.00  15.00   +37.50  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▂▂▂▂▄▄▃▃▄▄▅▆▅▄▆▆███
+8   Brroosha         14    9.00  11.00  13.00   8.50   +22.22  drifting ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▄▄▃▄▄▆▄▅▆▄█▆▄▅▆▄▆
+13  Suenami Rose     14  126.00 151.00 201.00 126.00   +19.84  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▅▁▁▁▅▃▅▅▅▅▅▁▅▁█▅▅▅▅
+3   Royal Heritage   14    6.75   5.50   7.50   5.50   -18.52  firming  ██▅█████████████████▆▃▃▁▁▃▃▃▄▆▆▆▃▃▁▅▆▃▁▁
+6   Share The Stars  14    3.50   3.20   3.70   2.80    -8.57  firming  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇████████▇▇█▇█▇█▇▇▆▄▆▃▁▃▃▄
+10  Racey Casey      14    3.30   3.50   3.80   3.00    +6.06  drifting ▃▃▃▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▆▇█▆▃▃▃▁▃▃▂▂▃▄▆▇▅▆▅
+9   Popthebubbly     14   18.00  19.00  23.00  17.00    +5.56  drifting ▃▃▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▆▅▁▁▅▅▅▅▅▅▅▅▅▃▅█▃▃▆▅
+4   Alcoshare        14    8.50   8.50   9.50   7.50    +0.00  steady   ▃▃▃████████▁▁▁▁▁▁▁▁▁▃▃▃▃▃▁▆▃▃▆▃▂▆▆▁▁▁▁▆▃
+7   Astrodean         4*  11.00  11.00  11.00  11.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+2   Min Kiata         4*  11.50  11.50  12.00  11.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+5   Parkrun          14   21.00  21.00  26.00  13.00    +0.00  steady   █████████████████████▅▂▃▂▁▂▂▂▅▅▅▂▂▃▃▅▅▇█
+14  Stellar Madame    4*  81.00  81.00  91.00  81.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+
+* = at least half this runner's books posted a single price only. A book with one
+    observation reports a 0.00% move by construction, so it neither confirms nor
+    denies a move. 3 of 14 rows are flagged.
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+========================================================================
+3. KEYED - the movers scan (3 credits per poll)
+   Two runs back to back. The first filters to Australia and correctly returns
+   nothing, because the Australian card had not opened. The second drops the
+   country filter at the loosest possible thresholds and returns twelve rows,
+   none of them Australian - Mountaineer Park is in West Virginia, Assiniboia
+   Downs is in Manitoba. This is why country=AU is not optional.
+========================================================================
+
+$ python3 pricemove.py scan --country AU --min-move-pct 5 --min-books 2
+[23:36:06Z] 0 movers  ·  1001 ms  ·  1 call, 3 credits (remaining: unlimited)
+  No rows. country=AU alone excludes races whose meeting is not confirmed yet,
+  which is most of an Australian card until close to the jump. Retry with
+  --include-unresolved, or lower --min-move-pct / --min-books.
+
+$ python3 pricemove.py scan --country '' --min-move-pct 1 --min-books 1 --limit 12   # no country filter
+[23:36:06Z] 12 movers  ·  182 ms  ·  1 call, 3 credits (remaining: unlimited)
+  Venue            Race Category   Jump  #   Runner             Dir        Open    Now    Move%  f/d/u
+  ----------------------------------------------------------------------------------------------------
+  Mountaineer Park R3   horse       13m  8   Unstable Mabel     drifting   7.00   9.00   +28.57  0/1/0
+  Mountaineer Park R3   horse       13m  1   Fiveminutsofpasion drifting   5.50   7.00   +27.27  0/1/0
+  Mountaineer Park R3   horse       13m  2   General Ginny      drifting  12.00  15.00   +25.00  0/1/0
+  Mountaineer Park R3   horse       13m  3   A Little Bit Crazy drifting   6.00   7.00   +16.67  0/1/0
+  Mountaineer Park R3   horse       13m  4   Opposite The Crowd firming    3.00   2.60   -13.33  1/0/0
+  Mountaineer Park R3   horse       13m  7   Loaded Once More   firming    4.00   3.50   -12.50  1/0/0
+  Assiniboia Downs R1   horse       53m  1   Princess Aleska    drifting   7.00   7.50    +7.14  0/1/0
+  Mountaineer Park R3   horse       13m  5   Worth Considering  drifting  18.00  19.00    +5.56  0/1/0
+  Assiniboia Downs R1   horse       53m  4   Play Free Bird     drifting   9.50  10.00    +5.26  0/1/0
+  Assiniboia Downs R1   horse       53m  3   Kikilove           drifting   3.60   3.70    +2.78  0/1/0
+  Assiniboia Downs R1   horse       53m  5   Hardly Mischievous drifting   2.35   2.40    +2.13  0/1/0
+  Assiniboia Downs R1   horse       53m  2   Norma No           drifting   2.70   2.75    +1.85  0/1/0
+
+========================================================================
+4. KEYED - reproducing the README's latency and gzip figures
+   python3 pricemove.py benchmark
+========================================================================
+
+$ python3 pricemove.py benchmark
+endpoint  /v1/racing/price-history
+race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
+samples   5 per mode
+
+new TLS connection per call    198  195  187  310  264  median  198.3 ms
+one connection reused           95   96  110   96   98  median   96.2 ms
+
+handshake paid once on the reused client: 254 ms
+gzip: 9,458 bytes on the wire -> 142,928 bytes decompressed (15.1x)
+
+This run: 2026-09-14 23:34 UTC
+
+========================================================================
+5. ERROR HANDLING
+   Missing file, missing key, bad key, unknown race, out-of-range parameter.
+   API errors are RFC 9457 problem+json and are surfaced with their detail.
+========================================================================
+
+$ python3 pricemove.py render docs/nope.json
+could not read docs/nope.json: [Errno 2] No such file or directory: 'docs/nope.json'
+(exit 2)
+
+$ env -u PE_API_KEY python3 pricemove.py race --race-id x
+PE_API_KEY is not set. This mode reads /v1/racing/price-history, which needs a key.
+Free key (1,500 credits/month, no card): https://puntersedge.online/api?utm_source=racing-price-movement-tracker&utm_medium=code
+To try the tool with no key at all, run:  python3 pricemove.py watch
+(exit 2)
+
+$ PE_API_KEY=not_a_real_key python3 pricemove.py scan --country AU
+HTTP 401: Invalid API key
+(exit 1)
+
+$ python3 pricemove.py race --race-id 00000000-0000-0000-0000-000000000000
+HTTP 404: No price history for race_id '00000000-0000-0000-0000-000000000000'.
+(exit 1)
+
+$ python3 pricemove.py scan --country AU --min-books 99
+HTTP 422: Validation Error
+  detail: [{"type": "less_than_equal", "loc": ["query", "min_books"], "msg": "Input should be less than or equal to 12", "input": "99", "ctx": {"le": 12}}]
+(exit 1)
+

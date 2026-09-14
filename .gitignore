@@ -1,0 +1,28 @@
+# Secrets - never commit an API key
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local scratch output (docs/ is committed deliberately)
+/out/
+/tmp/
+*.local.json

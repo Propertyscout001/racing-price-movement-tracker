@@ -1,0 +1,834 @@
+{
+ "race_id": "e79e50b1-bc25-4d1d-976c-6b34d0b6426c",
+ "venue": "Angle Park",
+ "race_number": 1,
+ "category": "greyhound",
+ "country": "AU",
+ "start_time": "2026-09-15T01:38:00Z",
+ "source": "demo-poll",
+ "points_returned": null,
+ "truncated": false,
+ "history_from": null,
+ "runners": [
+  {
+   "name": "Alia Rose",
+   "number": 1,
+   "books": {
+    "tab": {
+     "key": "tab",
+     "open_price": 14.0,
+     "close_price": 14.0,
+     "high": 14.0,
+     "low": 14.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 14.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 21
+      }
+     ],
+     "last_seen_secs": 6867
+    },
+    "pointsbetau": {
+     "key": "pointsbetau",
+     "open_price": 14.0,
+     "close_price": 14.0,
+     "high": 14.0,
+     "low": 14.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 14.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 24
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "neds": {
+     "key": "neds",
+     "open_price": 13.0,
+     "close_price": 14.0,
+     "high": 14.0,
+     "low": 13.0,
+     "move_pct": 7.69,
+     "points_count": 2,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 13.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 10
+      },
+      {
+       "secs_to_jump": 6842,
+       "win_price": 14.0,
+       "captured_at": "2026-09-14T23:43:57.866997Z"
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "ladbrokes_au": {
+     "key": "ladbrokes_au",
+     "open_price": 13.0,
+     "close_price": 14.0,
+     "high": 14.0,
+     "low": 13.0,
+     "move_pct": 7.69,
+     "points_count": 2,
+     "open_secs_to_jump": 7436,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7436,
+       "win_price": 13.0,
+       "captured_at": "2026-09-14T23:34:03.557202Z",
+       "held": 4
+      },
+      {
+       "secs_to_jump": 6917,
+       "win_price": 14.0,
+       "captured_at": "2026-09-14T23:42:42.705514Z",
+       "held": 3
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "betdeluxe": {
+     "key": "betdeluxe",
+     "open_price": 13.0,
+     "close_price": 13.0,
+     "high": 13.0,
+     "low": 13.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 13.0,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 2
+      }
+     ],
+     "last_seen_secs": 7052
+    },
+    "sportsbet": {
+     "key": "sportsbet",
+     "open_price": 14.0,
+     "close_price": 14.0,
+     "high": 14.0,
+     "low": 14.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7027,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7027,
+       "win_price": 14.0,
+       "captured_at": "2026-09-14T23:40:52.046688Z",
+       "held": 7
+      }
+     ],
+     "last_seen_secs": 6867
+    }
+   }
+  },
+  {
+   "name": "Sandy Knuckles",
+   "number": 2,
+   "books": {
+    "tab": {
+     "key": "tab",
+     "open_price": 4.8,
+     "close_price": 5.0,
+     "high": 5.0,
+     "low": 4.8,
+     "move_pct": 4.17,
+     "points_count": 2,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 4.8,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 13
+      },
+      {
+       "secs_to_jump": 7148,
+       "win_price": 5.0,
+       "captured_at": "2026-09-14T23:38:51.569498Z",
+       "held": 8
+      }
+     ],
+     "last_seen_secs": 6867
+    },
+    "betdeluxe": {
+     "key": "betdeluxe",
+     "open_price": 4.6,
+     "close_price": 4.6,
+     "high": 4.6,
+     "low": 4.6,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 7173,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 4.6,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 11
+      }
+     ],
+     "last_seen_secs": 7173
+    },
+    "pointsbetau": {
+     "key": "pointsbetau",
+     "open_price": 4.6,
+     "close_price": 5.0,
+     "high": 5.0,
+     "low": 4.6,
+     "move_pct": 8.7,
+     "points_count": 3,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 4.6,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 2
+      },
+      {
+       "secs_to_jump": 7148,
+       "win_price": 4.8,
+       "captured_at": "2026-09-14T23:38:51.569498Z"
+      },
+      {
+       "secs_to_jump": 7027,
+       "win_price": 5.0,
+       "captured_at": "2026-09-14T23:40:52.046688Z",
+       "held": 8
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "sportsbet": {
+     "key": "sportsbet",
+     "open_price": 4.6,
+     "close_price": 5.0,
+     "high": 5.0,
+     "low": 4.6,
+     "move_pct": 8.7,
+     "points_count": 2,
+     "open_secs_to_jump": 7436,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7436,
+       "win_price": 4.6,
+       "captured_at": "2026-09-14T23:34:03.557202Z",
+       "held": 7
+      },
+      {
+       "secs_to_jump": 7027,
+       "win_price": 5.0,
+       "captured_at": "2026-09-14T23:40:52.046688Z",
+       "held": 5
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "ladbrokes_au": {
+     "key": "ladbrokes_au",
+     "open_price": 4.6,
+     "close_price": 5.0,
+     "high": 5.0,
+     "low": 4.6,
+     "move_pct": 8.7,
+     "points_count": 2,
+     "open_secs_to_jump": 7336,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7336,
+       "win_price": 4.6,
+       "captured_at": "2026-09-14T23:35:43.771240Z",
+       "held": 7
+      },
+      {
+       "secs_to_jump": 6917,
+       "win_price": 5.0,
+       "captured_at": "2026-09-14T23:42:42.705514Z",
+       "held": 3
+      }
+     ],
+     "last_seen_secs": 6867
+    },
+    "neds": {
+     "key": "neds",
+     "open_price": 4.8,
+     "close_price": 5.0,
+     "high": 5.0,
+     "low": 4.8,
+     "move_pct": 4.17,
+     "points_count": 2,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 4.8,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 2
+      },
+      {
+       "secs_to_jump": 6917,
+       "win_price": 5.0,
+       "captured_at": "2026-09-14T23:42:42.705514Z",
+       "held": 3
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "betright": {
+     "key": "betright",
+     "open_price": 4.8,
+     "close_price": 4.8,
+     "high": 4.8,
+     "low": 4.8,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 4.8,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 2
+      }
+     ],
+     "last_seen_secs": 7052
+    }
+   }
+  },
+  {
+   "name": "Adhana Remi",
+   "number": 4,
+   "books": {
+    "unibet": {
+     "key": "unibet",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 7311,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 4
+      }
+     ],
+     "last_seen_secs": 7311
+    },
+    "pointsbetau": {
+     "key": "pointsbetau",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 7311,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 4
+      }
+     ],
+     "last_seen_secs": 7311
+    },
+    "ladbrokes_au": {
+     "key": "ladbrokes_au",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 5
+      }
+     ],
+     "last_seen_secs": 7052
+    },
+    "neds": {
+     "key": "neds",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7436,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7436,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:34:03.557202Z",
+       "held": 12
+      }
+     ],
+     "last_seen_secs": 7052
+    },
+    "betdeluxe": {
+     "key": "betdeluxe",
+     "open_price": 3.0,
+     "close_price": 2.9,
+     "high": 3.0,
+     "low": 2.9,
+     "move_pct": -3.33,
+     "points_count": 2,
+     "open_secs_to_jump": 7436,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7436,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:34:03.557202Z",
+       "held": 11
+      },
+      {
+       "secs_to_jump": 6842,
+       "win_price": 2.9,
+       "captured_at": "2026-09-14T23:43:57.866997Z"
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "palmerbet": {
+     "key": "palmerbet",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7436,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7436,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:34:03.557202Z",
+       "held": 18
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "sportsbet": {
+     "key": "sportsbet",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7336,
+     "close_secs_to_jump": 7311,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7336,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:35:43.771240Z",
+       "held": 2
+      }
+     ],
+     "last_seen_secs": 7311
+    },
+    "betright": {
+     "key": "betright",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7027,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7027,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:40:52.046688Z",
+       "held": 8
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "betr_au": {
+     "key": "betr_au",
+     "open_price": 3.0,
+     "close_price": 3.0,
+     "high": 3.0,
+     "low": 3.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7027,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7027,
+       "win_price": 3.0,
+       "captured_at": "2026-09-14T23:40:52.046688Z",
+       "held": 7
+      }
+     ],
+     "last_seen_secs": 6867
+    }
+   }
+  },
+  {
+   "name": "Whiplash Emmett",
+   "number": 5,
+   "books": {
+    "ladbrokes_au": {
+     "key": "ladbrokes_au",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 7
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "tab": {
+     "key": "tab",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 18
+      }
+     ],
+     "last_seen_secs": 6867
+    },
+    "pointsbetau": {
+     "key": "pointsbetau",
+     "open_price": 26.0,
+     "close_price": 29.0,
+     "high": 29.0,
+     "low": 26.0,
+     "move_pct": 11.54,
+     "points_count": 2,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 6
+      },
+      {
+       "secs_to_jump": 7148,
+       "win_price": 29.0,
+       "captured_at": "2026-09-14T23:38:51.569498Z",
+       "held": 11
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "sportsbet": {
+     "key": "sportsbet",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7336,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7336,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:35:43.771240Z",
+       "held": 12
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "neds": {
+     "key": "neds",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7336,
+     "close_secs_to_jump": 6892,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7336,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:35:43.771240Z",
+       "held": 10
+      }
+     ],
+     "last_seen_secs": 6892
+    },
+    "betright": {
+     "key": "betright",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 2
+      }
+     ],
+     "last_seen_secs": 7052
+    },
+    "palmerbet": {
+     "key": "palmerbet",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 6942,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 5
+      }
+     ],
+     "last_seen_secs": 6942
+    },
+    "betdeluxe": {
+     "key": "betdeluxe",
+     "open_price": 26.0,
+     "close_price": 26.0,
+     "high": 26.0,
+     "low": 26.0,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 6977,
+     "close_secs_to_jump": 6977,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 6977,
+       "win_price": 26.0,
+       "captured_at": "2026-09-14T23:41:42.168599Z"
+      }
+     ],
+     "last_seen_secs": 6977
+    }
+   }
+  },
+  {
+   "name": "Twitching",
+   "number": 7,
+   "books": {
+    "betdeluxe": {
+     "key": "betdeluxe",
+     "open_price": 2.25,
+     "close_price": 2.25,
+     "high": 2.25,
+     "low": 2.25,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 7052,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 2.25,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 16
+      }
+     ],
+     "last_seen_secs": 7052
+    },
+    "tab": {
+     "key": "tab",
+     "open_price": 2.25,
+     "close_price": 2.25,
+     "high": 2.25,
+     "low": 2.25,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 2.25,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 24
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "betr_au": {
+     "key": "betr_au",
+     "open_price": 2.25,
+     "close_price": 2.25,
+     "high": 2.25,
+     "low": 2.25,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7487,
+     "close_secs_to_jump": 6867,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7487,
+       "win_price": 2.25,
+       "captured_at": "2026-09-14T23:33:12.432637Z",
+       "held": 21
+      }
+     ],
+     "last_seen_secs": 6867
+    },
+    "betright": {
+     "key": "betright",
+     "open_price": 2.25,
+     "close_price": 2.25,
+     "high": 2.25,
+     "low": 2.25,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 7078,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 7078,
+       "win_price": 2.25,
+       "captured_at": "2026-09-14T23:40:01.910814Z",
+       "held": 10
+      }
+     ],
+     "last_seen_secs": 6842
+    },
+    "neds": {
+     "key": "neds",
+     "open_price": 2.2,
+     "close_price": 2.2,
+     "high": 2.2,
+     "low": 2.2,
+     "move_pct": 0.0,
+     "points_count": 1,
+     "open_secs_to_jump": 6842,
+     "close_secs_to_jump": 6842,
+     "open_is_baseline": true,
+     "points": [
+      {
+       "secs_to_jump": 6842,
+       "win_price": 2.2,
+       "captured_at": "2026-09-14T23:43:57.866997Z"
+      }
+     ],
+     "last_seen_secs": 6842
+    }
+   }
+  }
+ ]
+}
