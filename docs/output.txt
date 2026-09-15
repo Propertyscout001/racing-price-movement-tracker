@@ -10,10 +10,15 @@ Machine:  macOS (darwin 24.6.0), Python 3.9.6, no third-party packages installed
 Clock:    local time is AEST (UTC+10), so the UTC date is one day behind the
           local date for these late-evening-UTC runs.
 
-Runs were made on 2026-09-14 23:31-23:44 UTC, which is 2026-09-15 09:31-09:44
-AEST - before the Australian card opened for the day (first Australian race that
-day was 11:38 AEST). That timing is visible in the results below and is the
-honest reason the Australian movers scan returns nothing.
+Two capture sessions, both before the Australian card opened for the day:
+
+  session 1  2026-09-14 23:31-23:44 UTC  (2026-09-15 09:31-09:44 AEST)
+  session 2  2026-09-15 00:08-00:25 UTC  (2026-09-15 10:08-10:25 AEST)
+
+The first Australian race of that day jumped 11:38 AEST, and /v1/racing/movers
+only covers races already inside the ~60-minute price-capture window, so an
+empty Australian scan at those hours is the correct answer rather than a
+filter mistake. That timing is visible throughout the blocks below.
 
 ========================================================================
 1. KEYLESS - no API key, no account, 0 credits
@@ -399,35 +404,50 @@ Move% is the consensus (median across books) close vs open. Negative = firmed
 
 ========================================================================
 3. KEYED - the movers scan (3 credits per poll)
-   Two runs back to back. The first filters to Australia and correctly returns
-   nothing, because the Australian card had not opened. The second drops the
-   country filter at the loosest possible thresholds and returns twelve rows,
-   none of them Australian - Mountaineer Park is in West Virginia, Assiniboia
-   Downs is in Manitoba. This is why country=AU is not optional.
+   Two runs back to back, 2026-09-15 00:14-00:22 UTC (10:14-10:22 AEST).
+
+   The first filters to Australia and correctly returns nothing: the first
+   Australian race of the day jumps at 11:38 AEST and /v1/racing/movers only
+   covers races already inside the ~60-minute capture window, so there is no
+   captured opening line for any Australian runner yet. Rather than leave that
+   ambiguous, the tool spends one more credit on /v1/racing/events and says
+   when the window opens.
+
+   The second drops the country filter at the loosest thresholds the API
+   accepts and returns twelve rows, none of them Australian - Assiniboia Downs
+   is in Manitoba, Mountaineer Park is in West Virginia. Note every one of them
+   is 8, 18 or 38 minutes from jumping: the same 60-minute window, seen from
+   the other side. This is why country=AU is not optional.
 ========================================================================
 
-$ python3 pricemove.py scan --country AU --min-move-pct 5 --min-books 2
-[23:36:06Z] 0 movers  ·  1001 ms  ·  1 call, 3 credits (remaining: unlimited)
-  No rows. country=AU alone excludes races whose meeting is not confirmed yet,
-  which is most of an Australian card until close to the jump. Retry with
-  --include-unresolved, or lower --min-move-pct / --min-books.
+$ python3 pricemove.py scan --country AU --min-move-pct 1 --min-books 1
+[00:13:58Z] 0 movers  ·  242 ms  ·  1 call, 3 credits (remaining: unlimited)
+  No rows. /v1/racing/movers compares the current price against a captured
+  opening line, and capture only begins about 60 minutes before the jump, so a
+  country=AU card with no race inside that window has no mover to report, at
+  any threshold.
+  /v1/racing/events (1 credit): 69 AU race(s) in the next 6 hours. The next is
+  Angle Park R1, greyhound, jumping 2026-09-15T01:38:00Z  (in 1.4h)
+  - movers can only see it from about 00:38:00Z, 60 minutes out.
+  Secondary: a meeting that is not confirmed yet carries no country at all.
+  --include-unresolved includes those races.
 
 $ python3 pricemove.py scan --country '' --min-move-pct 1 --min-books 1 --limit 12   # no country filter
-[23:36:06Z] 12 movers  ·  182 ms  ·  1 call, 3 credits (remaining: unlimited)
+[00:21:45Z] 12 movers  ·  205 ms  ·  1 call, 3 credits (remaining: unlimited)
   Venue            Race Category   Jump  #   Runner             Dir        Open    Now    Move%  f/d/u
   ----------------------------------------------------------------------------------------------------
-  Mountaineer Park R3   horse       13m  8   Unstable Mabel     drifting   7.00   9.00   +28.57  0/1/0
-  Mountaineer Park R3   horse       13m  1   Fiveminutsofpasion drifting   5.50   7.00   +27.27  0/1/0
-  Mountaineer Park R3   horse       13m  2   General Ginny      drifting  12.00  15.00   +25.00  0/1/0
-  Mountaineer Park R3   horse       13m  3   A Little Bit Crazy drifting   6.00   7.00   +16.67  0/1/0
-  Mountaineer Park R3   horse       13m  4   Opposite The Crowd firming    3.00   2.60   -13.33  1/0/0
-  Mountaineer Park R3   horse       13m  7   Loaded Once More   firming    4.00   3.50   -12.50  1/0/0
-  Assiniboia Downs R1   horse       53m  1   Princess Aleska    drifting   7.00   7.50    +7.14  0/1/0
-  Mountaineer Park R3   horse       13m  5   Worth Considering  drifting  18.00  19.00    +5.56  0/1/0
-  Assiniboia Downs R1   horse       53m  4   Play Free Bird     drifting   9.50  10.00    +5.26  0/1/0
-  Assiniboia Downs R1   horse       53m  3   Kikilove           drifting   3.60   3.70    +2.78  0/1/0
-  Assiniboia Downs R1   horse       53m  5   Hardly Mischievous drifting   2.35   2.40    +2.13  0/1/0
-  Assiniboia Downs R1   horse       53m  2   Norma No           drifting   2.70   2.75    +1.85  0/1/0
+  Assiniboia Downs R1   horse        8m  2   Norma No           drifting   2.70   3.90   +44.44  0/1/0
+  Assiniboia Downs R2   horse       38m  4   Ringit             drifting  11.00  14.00   +27.27  0/1/0
+  Assiniboia Downs R1   horse        8m  5   Hardly Mischievous firming    2.35   1.75   -25.53  1/0/0
+  Assiniboia Downs R2   horse       38m  3   Az Silencer        drifting   5.50   6.50   +18.18  0/1/0
+  Assiniboia Downs R1   horse        8m  4   Play Free Bird     drifting   9.50  11.00   +15.79  0/1/0
+  Mountaineer Park R5   horse       18m  6   Special Cap        drifting  14.00  15.00    +7.14  0/1/0
+  Assiniboia Downs R2   horse       38m  6   Honourable Mention firming    4.50   4.20    -6.67  1/0/0
+  Assiniboia Downs R2   horse       38m  5   Onemorsteptoheaven drifting   8.00   8.50    +6.25  0/1/0
+  Mountaineer Park R5   horse       18m  8   Chelle Shocked     drifting   9.00   9.50    +5.56  0/1/0
+  Mountaineer Park R5   horse       18m  4   Tornada's Quest    drifting   9.00   9.50    +5.56  0/1/0
+  Mountaineer Park R5   horse       18m  3   Blumoon Fire       drifting   9.50  10.00    +5.26  0/1/0
+  Mountaineer Park R5   horse       18m  5   Moonlight Martini  drifting  20.00  21.00    +5.00  0/1/0
 
 ========================================================================
 4. KEYED - reproducing the README's latency and gzip figures

@@ -236,37 +236,46 @@ price *move*, not a sample, so a gap means the price held. `max_points` must be 
 before treating a book's `open_price` as an hour-out price: it is the first price that
 book posted, whenever that was.
 
-**`/v1/demo/racing/next-to-go`** (`watch`) is keyless and costs nothing.
+**`/v1/demo/racing/next-to-go`** (`watch`) is keyless and costs nothing, and it is a
+teaser rather than the full feed: the API documents it as the next three races, up to
+five runners each, the best three bookmaker prices, cached 30 seconds, 30 requests a
+minute per IP. That is why `watch` prints five runners where the keyed modes print the
+whole field, and why some polls report `0 price changes` — at the default 20-second
+interval you will sometimes read the same cached snapshot twice. `--interval 30` lines
+up with the cache; the default is deliberately a little faster so a short demo run
+still shows several polls.
 
 ### Gotchas this tool had to handle
 
 **Racing endpoints are not Australia-only.** This is the one that will embarrass you.
 Running `scan` with no country filter, at the loosest thresholds the API accepts
-(`min_move_pct=1`, `min_books=1`), at 23:36 UTC on 2026-09-14 — 09:36 on 2026-09-15
-Australian eastern time, before the Australian card had opened:
+(`min_move_pct=1`, `min_books=1`), at 00:21 UTC on 2026-09-15 — 10:21 Australian eastern
+time, before the Australian card had opened:
 
 ```
-[23:36:06Z] 12 movers  ·  182 ms  ·  1 call, 3 credits (remaining: unlimited)
+[00:21:45Z] 12 movers  ·  205 ms  ·  1 call, 3 credits (remaining: unlimited)
   Venue            Race Category   Jump  #   Runner             Dir        Open    Now    Move%  f/d/u
   ----------------------------------------------------------------------------------------------------
-  Mountaineer Park R3   horse       13m  8   Unstable Mabel     drifting   7.00   9.00   +28.57  0/1/0
-  Mountaineer Park R3   horse       13m  1   Fiveminutsofpasion drifting   5.50   7.00   +27.27  0/1/0
-  Mountaineer Park R3   horse       13m  2   General Ginny      drifting  12.00  15.00   +25.00  0/1/0
-  Mountaineer Park R3   horse       13m  3   A Little Bit Crazy drifting   6.00   7.00   +16.67  0/1/0
-  Mountaineer Park R3   horse       13m  4   Opposite The Crowd firming    3.00   2.60   -13.33  1/0/0
-  Mountaineer Park R3   horse       13m  7   Loaded Once More   firming    4.00   3.50   -12.50  1/0/0
-  Assiniboia Downs R1   horse       53m  1   Princess Aleska    drifting   7.00   7.50    +7.14  0/1/0
-  Mountaineer Park R3   horse       13m  5   Worth Considering  drifting  18.00  19.00    +5.56  0/1/0
-  Assiniboia Downs R1   horse       53m  4   Play Free Bird     drifting   9.50  10.00    +5.26  0/1/0
-  Assiniboia Downs R1   horse       53m  3   Kikilove           drifting   3.60   3.70    +2.78  0/1/0
-  Assiniboia Downs R1   horse       53m  5   Hardly Mischievous drifting   2.35   2.40    +2.13  0/1/0
-  Assiniboia Downs R1   horse       53m  2   Norma No           drifting   2.70   2.75    +1.85  0/1/0
+  Assiniboia Downs R1   horse        8m  2   Norma No           drifting   2.70   3.90   +44.44  0/1/0
+  Assiniboia Downs R2   horse       38m  4   Ringit             drifting  11.00  14.00   +27.27  0/1/0
+  Assiniboia Downs R1   horse        8m  5   Hardly Mischievous firming    2.35   1.75   -25.53  1/0/0
+  Assiniboia Downs R2   horse       38m  3   Az Silencer        drifting   5.50   6.50   +18.18  0/1/0
+  Assiniboia Downs R1   horse        8m  4   Play Free Bird     drifting   9.50  11.00   +15.79  0/1/0
+  Mountaineer Park R5   horse       18m  6   Special Cap        drifting  14.00  15.00    +7.14  0/1/0
+  Assiniboia Downs R2   horse       38m  6   Honourable Mention firming    4.50   4.20    -6.67  1/0/0
+  Assiniboia Downs R2   horse       38m  5   Onemorsteptoheaven drifting   8.00   8.50    +6.25  0/1/0
+  Mountaineer Park R5   horse       18m  8   Chelle Shocked     drifting   9.00   9.50    +5.56  0/1/0
+  Mountaineer Park R5   horse       18m  4   Tornada's Quest    drifting   9.00   9.50    +5.56  0/1/0
+  Mountaineer Park R5   horse       18m  3   Blumoon Fire       drifting   9.50  10.00    +5.26  0/1/0
+  Mountaineer Park R5   horse       18m  5   Moonlight Martini  drifting  20.00  21.00    +5.00  0/1/0
 ```
 
-Mountaineer Park is in West Virginia and Assiniboia Downs is in Manitoba. Not one
+Assiniboia Downs is in Manitoba and Mountaineer Park is in West Virginia. Not one
 Australian runner in twelve rows. Always pass `country=AU` — the tool defaults to it —
 or you will publish North American and Japanese races under an "Australian racing"
-heading.
+heading. Notice the `Jump` column too: 8, 18 and 38 minutes. That is the same
+60-minute capture window seen from the other side, and it is the subject of the next
+gotcha.
 
 **But `country=AU` returns nothing until the card is inside the capture window.** This is
 the one that cost this build an hour. `/v1/racing/movers` compares each runner's current
@@ -387,7 +396,7 @@ past movement says nothing about the next race.
 - **`scan` only sees races inside that same window.** `max_mins_to_jump` accepts up to
   360, but a mover needs a captured opening line to be measured against, so in practice
   nothing is returned beyond about 60 minutes to the jump — every mover seen across this
-  build's scans was between 9 and 54 minutes out, and not one was over an hour. It is
+  build's scans was between 8 and 54 minutes out, and not one was over an hour. It is
   also forward-only: there is no way to scan for movers on a race that has already
   jumped.
 - **This repo does not build on `/v1/racing/closing-lines`.** That endpoint is plan-gated
