@@ -212,6 +212,31 @@ python3 pricemove.py race --race-id <race_id> --svg chart.svg --json series.json
 python3 pricemove.py race --venue Hamilton --race-number 8 --date 2026-09-14
 ```
 
+When the Australian card is inside the capture window, that first command returns rows.
+Captured 00:39:56 UTC (10:39 AEST) on 2026-09-15:
+
+```
+[00:39:56Z] 4 movers  ·  197 ms  ·  1 call, 3 credits (remaining: unlimited)
+  Venue      Race Category   Jump  #   Runner          Dir        Open    Now    Move%  f/d/u
+  -------------------------------------------------------------------------------------------
+  Angle Park R1   greyhound   58m  5   Whiplash Emmett drifting  20.33  22.67   +11.48  0/3/11
+  Angle Park R1   greyhound   58m  1   Alia Rose       drifting  12.50  13.75   +10.00  0/4/10
+  Angle Park R1   greyhound   58m  8   Adhana Tori     drifting   4.60   4.85    +5.43  0/4/10
+  Angle Park R1   greyhound   58m  2   Sandy Knuckles  drifting   4.60   4.85    +5.43  0/4/10
+```
+
+Two things to read there. The `Jump` column says 58m: this race entered the capture
+window about ninety seconds earlier, and the empty scan quoted further down predicted
+exactly that ("movers can only see it from about 00:38:00Z"). And `f/d/u` says 0/3/11 on
+the top row — of the fourteen books quoting, none firmed, three drifted and eleven
+reported unchanged — so an +11.48% headline here is three books repricing, not a
+market-wide move. Gate on those counters before you treat a number as broad.
+
+It is also the same race the keyless transcripts above were polling two hours out, when
+nothing had moved yet. Sandy Knuckles reads 5.00 in that demo table and 4.85 here because
+the demo carries only each runner's best three prices, and the best price is by
+definition the longest one; this row is a median across fourteen books.
+
 `--json` is worth using. Price history costs 5 credits each time you fetch it, so save
 the series once and iterate on the table and the chart with `render` for free.
 
@@ -397,7 +422,9 @@ past movement says nothing about the next race.
 - **`scan` only sees races inside that same window.** `max_mins_to_jump` accepts up to
   360, but a mover needs a captured opening line to be measured against, so in practice
   nothing is returned beyond about 60 minutes to the jump — every mover seen across this
-  build's scans was between 8 and 54 minutes out, and not one was over an hour. It is
+  build's scans was between 8 and 58 minutes out, and not one was over an hour. The
+  closest to the edge was the Australian row quoted earlier: it appeared at 58 minutes
+  to the jump, about ninety seconds after that race crossed the 60-minute mark. It is
   also forward-only: there is no way to scan for movers on a race that has already
   jumped.
 - **This repo does not build on `/v1/racing/closing-lines`.** That endpoint is plan-gated

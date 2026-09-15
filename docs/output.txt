@@ -10,15 +10,17 @@ Machine:  macOS (darwin 24.6.0), Python 3.9.6, no third-party packages installed
 Clock:    local time is AEST (UTC+10), so the UTC date is one day behind the
           local date for these late-evening-UTC runs.
 
-Two capture sessions, both before the Australian card opened for the day:
+Two capture sessions:
 
   session 1  2026-09-14 23:31-23:44 UTC  (2026-09-15 09:31-09:44 AEST)
-  session 2  2026-09-15 00:08-00:25 UTC  (2026-09-15 10:08-10:25 AEST)
+  session 2  2026-09-15 00:08-00:40 UTC  (2026-09-15 10:08-10:40 AEST)
 
 The first Australian race of that day jumped 11:38 AEST, and /v1/racing/movers
 only covers races already inside the ~60-minute price-capture window, so an
-empty Australian scan at those hours is the correct answer rather than a
-filter mistake. That timing is visible throughout the blocks below.
+empty Australian scan before 10:38 AEST is the correct answer rather than a
+filter mistake. Section 3 is that empty scan; section 3b is the same command a
+few minutes after the window opened, with real Australian rows in it. The
+timing is visible throughout the blocks below.
 
 ========================================================================
 1. KEYLESS - no API key, no account, 0 credits
@@ -448,6 +450,33 @@ $ python3 pricemove.py scan --country '' --min-move-pct 1 --min-books 1 --limit 
   Mountaineer Park R5   horse       18m  4   Tornada's Quest    drifting   9.00   9.50    +5.56  0/1/0
   Mountaineer Park R5   horse       18m  3   Blumoon Fire       drifting   9.50  10.00    +5.26  0/1/0
   Mountaineer Park R5   horse       18m  5   Moonlight Martini  drifting  20.00  21.00    +5.00  0/1/0
+
+========================================================================
+3b. KEYED - the same scan once the Australian card is live
+   python3 pricemove.py scan --country AU --min-move-pct 5 --min-books 3
+
+   Same command, same filters as the empty run above, 26 minutes later. The
+   only thing that changed is that an Australian race has entered the
+   ~60-minute price-capture window, so /v1/racing/movers finally has an opening
+   line to compare against. The Jump column reads 58m - the race crossed the
+   60-minute mark at 00:38:00Z, which is the time the empty run above said the
+   window would open. It is also the same Angle Park R1 the keyless watch runs
+   in sections 1 and 1b were following two hours out, when nothing had moved.
+
+   Read f/d/u before the headline: 0/3/11 on the top row means that of the
+   fourteen books quoting, none firmed, three drifted, and eleven reported
+   unchanged. A +11.48% consensus move on three books is not a market-wide
+   move.
+========================================================================
+
+$ python3 pricemove.py scan --country AU --min-move-pct 5 --min-books 3
+[00:39:56Z] 4 movers  ·  197 ms  ·  1 call, 3 credits (remaining: unlimited)
+  Venue      Race Category   Jump  #   Runner          Dir        Open    Now    Move%  f/d/u
+  -------------------------------------------------------------------------------------------
+  Angle Park R1   greyhound   58m  5   Whiplash Emmett drifting  20.33  22.67   +11.48  0/3/11
+  Angle Park R1   greyhound   58m  1   Alia Rose       drifting  12.50  13.75   +10.00  0/4/10
+  Angle Park R1   greyhound   58m  8   Adhana Tori     drifting   4.60   4.85    +5.43  0/4/10
+  Angle Park R1   greyhound   58m  2   Sandy Knuckles  drifting   4.60   4.85    +5.43  0/4/10
 
 ========================================================================
 4. KEYED - reproducing the README's latency and gzip figures
