@@ -20,9 +20,9 @@ honest reason the Australian movers scan returns nothing.
    python3 pricemove.py watch --interval 25 --minutes 11
 
    Polls /v1/demo/racing/next-to-go and builds its own price series from the
-   snapshots. The two 429s partway through are real: other testing from this
+   snapshots. The nine 429s through the run are real: other testing from this
    same IP tripped the demo endpoint's 30-request/min per-IP limit while the
-   watch was running, and the client backed off and recovered.
+   watch was running, and the client backed off and recovered every time.
 ========================================================================
 
 Polling https://api.puntersedge.online/v1/demo/racing/next-to-go every 25s for 11 minute(s).
@@ -92,25 +92,78 @@ SVG chart written to docs/demo-watch.svg
 Normalised series written to docs/demo-watch.json
 
 ========================================================================
+1b. KEYLESS - the exact command the README puts first
+   python3 pricemove.py watch --minutes 3
+
+   Nine polls at the default 20-second interval, run 2026-09-15 00:13 UTC
+   (10:13 AEST) - 84 minutes before the first Australian race of the day.
+   This is the honest first-run experience at a quiet hour: the market is
+   not moving yet, every row reads +0.00% and every row is flagged thin.
+   The window line is the tool's own summary of what it saw.
+========================================================================
+
+$ python3 pricemove.py watch --minutes 3
+Polling https://api.puntersedge.online/v1/demo/racing/next-to-go every 20s for 3 minute(s).
+No API key, 0 credits. The demo endpoint allows 30 requests/min per IP.
+Ctrl-C stops early and still prints the table.
+
+demo note: Free sandbox sample (truncated). Get a free API key for full data: https://puntersedge.online/api?utm_source=demo_api&utm_medium=sandbox
+
+poll 1   00:13:40Z  Angle Park R1  1.4h to jump  ·  15 prices recorded  ·  184 ms
+poll 2   00:14:01Z  Angle Park R1  1.4h to jump  ·  0 price changes  ·  96 ms
+poll 3   00:14:21Z  Angle Park R1  1.4h to jump  ·  7 price changes  ·  42 ms
+poll 4   00:14:41Z  Angle Park R1  1.4h to jump  ·  2 price changes  ·  364 ms
+poll 5   00:15:01Z  Angle Park R1  1.4h to jump  ·  0 price changes  ·  53 ms
+poll 6   00:15:21Z  Angle Park R1  1.4h to jump  ·  3 price changes  ·  68 ms
+poll 7   00:15:41Z  Angle Park R1  1.4h to jump  ·  0 price changes  ·  50 ms
+poll 8   00:16:01Z  Angle Park R1  1.4h to jump  ·  1 price change  ·  60 ms
+poll 9   00:16:21Z  Angle Park R1  1.4h to jump  ·  0 price changes  ·  43 ms
+
+9 poll(s), 28 point(s) collected.
+
+Angle Park R1  (greyhound, AU)
+race_id   e79e50b1-bc25-4d1d-976c-6b34d0b6426c
+jump      2026-09-15T01:38:00Z
+window    ~1.4h before the jump  (3m observed)
+source    /v1/demo/racing/next-to-go (keyless, 0 credits, polled by this tool)
+
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (polled window)
+------------------------------------------------------------------------------------------------------------------
+1   Alia Rose         5*  14.00  14.00  14.00  14.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+2   Sandy Knuckles    6*   5.00   5.00   5.00   5.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+4   Adhana Remi       7*   2.90   2.90   3.00   2.90    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+5   Whiplash Emmett   6*  26.00  26.00  29.00  26.00    +0.00  steady   ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+7   Twitching         4*   2.23   2.23   2.25   2.20    +0.00  steady   ██████████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+* = at least half this runner's books posted a single price only. A book with one
+    observation reports a 0.00% move by construction, so it neither confirms nor
+    denies a move. 5 of 5 rows are flagged.
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+========================================================================
 2. KEYED - full price history for one Australian race (5 credits)
    Hamilton R8, an AU thoroughbred race that jumped 2026-09-14 07:00 UTC.
    This produced docs/hamilton-r8.svg and docs/hamilton-r8.json.
 ========================================================================
 
 $ export PE_API_KEY=...            # never echoed, never committed
-$ python3 pricemove.py race --race-id b4b126d9-24a6-4121-9a92-b40dc389a74a \
+$ python3 pricemove.py race --venue Hamilton --race-number 8 --date 2026-09-14 \
       --svg docs/hamilton-r8.svg --json docs/hamilton-r8.json
-fetched in 189 ms  ·  1 call, 5 credits (remaining: unlimited)
+fetched in 266 ms  ·  1 call, 5 credits (remaining: unlimited)
 
 Hamilton R8  (horse, AU)
 race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
 jump      2026-09-14T07:00:00Z
 window    from 60m to 9s before the jump  (60m observed)
 source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
 points    1105
 
-#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (open -> jump)
------------------------------------------------------------------------------------------------------------------
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+----------------------------------------------------------------------------------------------------------------
 11  Frosty Night     14   23.00  34.00  41.00  21.00   +47.83  drifting ▂▂▄▄▄▄▄▄▄▄▄▄▄▄▁▂▂▂▂▂▂▁▁▁▆▄▄▄▄▃▂▇▆█▄▄▄▆██
 1   Strongside       14   10.00  14.00  15.00   9.00   +40.00  drifting ▂▂▄▂▂▂▂▂▂▂▂▂▂▂▄▄▄▄▄▄▄▂▂▁▂▄▂▂▂▂▂▂▂▄▂▄▄▅██
 12  State Of Maine   14   16.00  22.00  26.00  15.00   +37.50  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▂▂▂▂▄▄▃▃▄▄▅▆▅▄▆▆███
@@ -136,6 +189,12 @@ Move% is the consensus (median across books) close vs open. Negative = firmed
 SVG chart written to docs/hamilton-r8.svg
 Normalised series written to docs/hamilton-r8.json
 
+(Addressed by venue + race number + date rather than by race_id: the API documents
+race ids as resolving from the live feed, which holds about the next six hours,
+while the venue key resolves in the permanent archive too. Both keys return the same
+race here - race_id b4b126d9-24a6-4121-9a92-b40dc389a74a, 1105 points - and the JSON
+this wrote is byte-identical to the one fetched by race_id on 2026-09-14.)
+
 ========================================================================
 2b. OFFLINE - re-rendering the saved series, no network, no key, 0 credits
    This is the block quoted in the README.
@@ -148,10 +207,12 @@ race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
 jump      2026-09-14T07:00:00Z
 window    from 60m to 9s before the jump  (60m observed)
 source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
 points    1105
 
-#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (open -> jump)
------------------------------------------------------------------------------------------------------------------
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+----------------------------------------------------------------------------------------------------------------
 11  Frosty Night     14   23.00  34.00  41.00  21.00   +47.83  drifting ▂▂▄▄▄▄▄▄▄▄▄▄▄▄▁▂▂▂▂▂▂▁▁▁▆▄▄▄▄▃▂▇▆█▄▄▄▆██
 1   Strongside       14   10.00  14.00  15.00   9.00   +40.00  drifting ▂▂▄▂▂▂▂▂▂▂▂▂▂▂▄▄▄▄▄▄▄▂▂▁▂▄▂▂▂▂▂▂▂▄▂▄▄▅██
 12  State Of Maine   14   16.00  22.00  26.00  15.00   +37.50  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▂▂▂▂▄▄▃▃▄▄▅▆▅▄▆▆███
@@ -170,6 +231,168 @@ points    1105
 * = at least half this runner's books posted a single price only. A book with one
     observation reports a 0.00% move by construction, so it neither confirms nor
     denies a move. 3 of 14 rows are flagged.
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+========================================================================
+2c. THE 60-MINUTE CAPTURE WINDOW - eight more races, every one the same
+   Price history is not "market open to the jump": capture begins about an
+   hour out. Eight races, three categories, four meeting dates, --top 1 so
+   each block stays short. Every window line reads "from 60m".
+   With Hamilton R8 above that is nine races; measured straight off the
+   response, the widest point in each was 3,596-3,599 seconds from the jump
+   (59.9-60.0 minutes) and none was truncated.
+========================================================================
+
+$ python3 pricemove.py race --venue 'Corowa' --race-number 7 --date 2026-09-14 --top 1
+fetched in 239 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+Corowa R7  (horse, AU)
+race_id   3be0045e-3ffb-46e7-b2ee-be2eb0319797
+jump      2026-09-14T07:30:00Z
+window    from 60m to 25s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    940
+
+#   Runner             Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+------------------------------------------------------------------------------------------------------------------
+14  Imposing Tallulah  14   26.00  34.00  41.00  26.00   +30.77  drifting ▁▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▁▂▁▅▅▂▁▁▁▅▂▅▅█▅▅█
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Pinjarra' --race-number 9 --date 2026-09-14 --top 1
+fetched in 251 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+PINJARRA R9  (harness, AU)
+race_id   b0a053e8-b807-4398-be06-4753eafef4d1
+jump      2026-09-14T09:12:00Z
+window    from 60m to 7s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    1253
+
+#   Runner        Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+-------------------------------------------------------------------------------------------------------------
+7   Seagrass      14   10.00  17.00  19.00   9.00   +70.00  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▃▆▇▇█
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Sandown Park' --race-number 11 --date 2026-09-14 --top 1
+fetched in 238 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+SANDOWN PARK R11  (greyhound, AU)
+race_id   de29eb14-1ad1-4fb2-94d9-ab3a588c38f2
+jump      2026-09-14T12:27:00Z
+window    from 60m to 4s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    345
+
+#   Runner        Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+-------------------------------------------------------------------------------------------------------------
+2   Viking Ruler  14    2.40   2.80   3.10   2.30   +16.67  drifting ▁▁▁▁▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▂▂▂▂▂▂▁▁▁▁▁▁▁▁▂▂▄▅█▇
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Toowoomba' --race-number 6 --date 2026-09-12 --top 1
+fetched in 272 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+TOOWOOMBA R6  (horse, AU)
+race_id   d4c4ae2d-bbf5-4a76-ba70-772c95bee3c3
+jump      2026-09-12T10:30:00Z
+window    from 60m to 0s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    453
+
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+----------------------------------------------------------------------------------------------------------------
+1   Langdown Legacy  12    8.50  11.00  13.00   8.00   +29.41  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▂▂▂▂▁▁▁▁▁▁▂▂▃▄▃▄▅▆▆█
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Globe Derby' --race-number 10 --date 2026-09-12 --top 1
+fetched in 284 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+GLOBE DERBY R10  (harness, AU)
+race_id   46be5184-48c6-4815-99ca-4ae5f1f2e5c2
+jump      2026-09-12T13:13:00Z
+window    from 60m to 7s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    586
+
+#   Runner        Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+-------------------------------------------------------------------------------------------------------------
+3   Hayoak        12   14.00  30.00  34.00  14.00  +114.29  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▂▂▂▂▂▃▃▅▆▆█
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Belmont' --race-number 8 --date 2026-09-09 --top 1
+fetched in 309 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+Belmont R8  (horse, AU)
+race_id   1565d003-5d0c-4718-829d-197c6fd828b5
+jump      2026-09-09T09:30:00Z
+window    from 60m to 15s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    863
+
+#   Runner             Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+------------------------------------------------------------------------------------------------------------------
+12  Lieutenant Dunbar  14   21.00  31.00  41.00  19.00   +47.62  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▂▂▂▂▂▂▂▄▄▄▄▅▄▆█▆▆
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Melton' --race-number 10 --date 2026-09-09 --top 1
+fetched in 252 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+MELTON R10  (harness, AU)
+race_id   32220cd9-68e5-4317-8e31-2c9daf3fbe64
+jump      2026-09-09T12:44:00Z
+window    from 60m to 3s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    561
+
+#   Runner        Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+-------------------------------------------------------------------------------------------------------------
+2   Cinquanta     14    2.90   4.40   4.60   2.70   +51.72  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂▂▂▂▂▂▂▁▁▁▁▁▁▂▃▄▅▆██
+
+Move% is the consensus (median across books) close vs open. Negative = firmed
+(price shortened), positive = drifted (price lengthened).
+
+$ python3 pricemove.py race --venue 'Launceston' --race-number 10 --date 2026-09-14 --top 1
+fetched in 257 ms  ·  1 call, 5 credits (remaining: unlimited)
+
+LAUNCESTON R10  (greyhound, AU)
+race_id   7a98e03d-b704-4607-bd7f-78549efb7a70
+jump      2026-09-14T12:20:00Z
+window    from 60m to 10s before the jump  (60m observed)
+source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
+points    542
+
+#   Runner          Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+---------------------------------------------------------------------------------------------------------------
+2   Heartbreak Kid  14    6.50   9.50  11.00   5.50   +46.15  drifting ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▁▁▂▂▂▄▆█
 
 Move% is the consensus (median across books) close vs open. Negative = firmed
 (price shortened), positive = drifted (price lengthened).
@@ -213,16 +436,22 @@ $ python3 pricemove.py scan --country '' --min-move-pct 1 --min-books 1 --limit 
 
 $ python3 pricemove.py benchmark
 endpoint  /v1/racing/price-history
-race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
+race      Hamilton R8  2026-09-14
 samples   5 per mode
 
-new TLS connection per call    198  195  187  310  264  median  198.3 ms
-one connection reused           95   96  110   96   98  median   96.2 ms
+new TLS connection per call    288  319  289  315  305  median  305.0 ms
+one connection reused          160  156  154  156  144  median  155.9 ms
 
-handshake paid once on the reused client: 254 ms
+handshake paid once on the reused client: 292 ms
 gzip: 9,458 bytes on the wire -> 142,928 bytes decompressed (15.1x)
 
-This run: 2026-09-14 23:34 UTC
+This run: 2026-09-15 00:08 UTC
+
+(The same command 9 hours earlier, on the previous day's network, gave 198.3 ms
+cold and 96.2 ms warm. The absolute latency is a property of the link, not the
+API; the ~2x ratio and the 15.1x compression held across both runs. Note that
+benchmark addresses its default race by venue + race number + date, not race_id,
+so it should keep working after the sample race leaves the live feed.)
 
 ========================================================================
 5. ERROR HANDLING
@@ -241,7 +470,7 @@ To try the tool with no key at all, run:  python3 pricemove.py watch
 (exit 2)
 
 $ PE_API_KEY=not_a_real_key python3 pricemove.py scan --country AU
-HTTP 401: Invalid API key
+HTTP 401: Invalid API key. That value looks too short to be a PuntersEdge key. Retrying will not clear this. Check the key in your console at https://puntersedge.online/api/console — if it was rotated, the previous key stops working once its grace window expires. Need a new one? https://puntersedge.online/api?utm_source=api_401&utm_medium=invalid_key
 (exit 1)
 
 $ python3 pricemove.py race --race-id 00000000-0000-0000-0000-000000000000
@@ -252,4 +481,3 @@ $ python3 pricemove.py scan --country AU --min-books 99
 HTTP 422: Validation Error
   detail: [{"type": "less_than_equal", "loc": ["query", "min_books"], "msg": "Input should be less than or equal to 12", "input": "99", "ctx": {"le": 12}}]
 (exit 1)
-

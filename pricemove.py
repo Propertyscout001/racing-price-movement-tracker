@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-pricemove.py - track how Australian racing prices move between market open and the jump.
+pricemove.py - track how Australian racing prices move in the hour before the jump.
 
 Three modes, one analysis engine:
 
@@ -25,7 +25,7 @@ import os
 import ssl
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 API_HOST = "api.puntersedge.online"
 UA = "racing-price-movement-tracker/1.0 (+https://github.com/Propertyscout001/racing-price-movement-tracker)"
@@ -37,7 +37,7 @@ SIGNUP = ("https://puntersedge.online/api"
 COST = {
     "/v1/racing/movers": 3,
     "/v1/racing/price-history": 5,
-    "/v1/racing/next-to-go": 2,
+    "/v1/racing/events": 1,
 }
 
 BLOCKS = "▁▂▃▄▅▆▇█"
@@ -74,11 +74,13 @@ class Client:
         request itself, and this tool makes many small calls in a loop.
 
     Retry policy is deliberately narrow. A hidden retry on a price endpoint can
-    hand you a price that was recorded before a move, so this client NEVER
-    retries a response it actually received - no 5xx retry, no 4xx retry. It
-    reconnects and retries exactly once when a *reused* connection was dropped
-    before any response byte arrived (a normal keep-alive expiry), and it says
-    so on stderr when it does.
+    hand you a price that was recorded before a move, so this client does not
+    retry a response that carried data: no 5xx retry, and no 4xx retry other
+    than 429. A 429 carries no prices at all - the request was refused - so it
+    is backed off and retried up to max_429_retries times, honouring Retry-After
+    when the header is a number. The client also reconnects and retries exactly
+    once when a *reused* connection was dropped before any response byte arrived
+    (a normal keep-alive expiry), and it says so on stderr when it does.
     """
 
     def __init__(self, host=API_HOST, api_key=None, timeout=20.0, verbose=False):
@@ -588,11 +590,20 @@ def race_heading(race):
     lines.append("jump      %s" % race.get("start_time"))
     span = race_span(race)
     if span:
-        lines.append("window    from %s to %s before the jump  (%s observed)"
-                     % (fmt_out(span[0]), fmt_out(span[1]), fmt_out(span[0] - span[1])))
+        start, end = fmt_out(span[0]), fmt_out(span[1])
+        if start == end:
+            # Both ends round to the same label - "from 1.7h to 1.7h" reads as a no-op.
+            lines.append("window    ~%s before the jump  (%s observed)"
+                         % (start, fmt_out(span[0] - span[1])))
+        else:
+            lines.append("window    from %s to %s before the jump  (%s observed)"
+                         % (start, end, fmt_out(span[0] - span[1])))
     src = {"price-history": "/v1/racing/price-history (keyed, 5 credits)",
            "demo-poll": "/v1/demo/racing/next-to-go (keyless, 0 credits, polled by this tool)"}
     lines.append("source    %s" % src.get(race["source"], race["source"]))
+    if race["source"] == "price-history":
+        lines.append("note      capture begins 60 min before the jump, so Open is the first")
+        lines.append("          price seen in that window, not the market's opening price")
     if race.get("points_returned") is not None:
         lines.append("points    %s%s" % (race["points_returned"],
                                          "  (TRUNCATED - raise --max-points)" if race.get("truncated") else ""))
@@ -604,7 +615,7 @@ def is_thin(s):
     return bool(s["books"]) and s["thin_books"] >= s["books"] / 2.0
 
 
-def render_table(summaries, paths, ascii_mode, path_label="Path (open -> jump)"):
+def render_table(summaries, paths, ascii_mode, path_label="Path (60m -> jump)"):
     """Fixed-width per-runner open/close/high/low/move_pct table."""
     name_w = max([12] + [len(s["name"] or "") for s in summaries])
     name_w = min(name_w, 24)
@@ -803,7 +814,7 @@ def emit_race(race, args):
     print()
     print(race_heading(race))
     print()
-    path_label = ("Path (open -> jump)" if race["source"] == "price-history"
+    path_label = ("Path (60m -> jump)" if race["source"] == "price-history"
                   else "Path (polled window)")
     print(render_table(summaries, spark, args.ascii, path_label))
     print()
@@ -899,6 +910,7 @@ def cmd_scan(args):
         print("%d polls x 3 credits = %d credits, one every %ds.\n"
               % (args.repeat, args.repeat * 3, args.interval))
 
+    explained = False        # the timing explainer costs a credit; once per run is enough
     for poll in range(args.repeat):
         try:
             rows, ms = client.get("/v1/racing/movers", params)
@@ -910,11 +922,15 @@ def cmd_scan(args):
               % (stamp, len(rows), "" if len(rows) == 1 else "s", ms, client.credits_line()))
         if rows:
             print(render_movers(rows))
-        elif args.country and not args.include_unresolved:
-            print("  No rows. country=%s alone excludes races whose meeting is not confirmed yet,"
+        elif args.country:
+            print("  No rows. /v1/racing/movers compares the current price against a captured")
+            print("  opening line, and capture only begins about 60 minutes before the jump, so a")
+            print("  country=%s card with no race inside that window has no mover to report, at"
                   % args.country)
-            print("  which is most of an Australian card until close to the jump. Retry with")
-            print("  --include-unresolved, or lower --min-move-pct / --min-books.")
+            print("  any threshold.")
+            if not explained:
+                explain_empty_country(client, args)
+                explained = True
         else:
             print("  No mover cleared min_move_pct=%s across min_books=%s within %s minutes."
                   % (args.min_move_pct, args.min_books, args.max_mins_to_jump))
@@ -924,6 +940,59 @@ def cmd_scan(args):
             time.sleep(args.interval)
     client.close()
     return 0
+
+
+def explain_empty_country(client, args):
+    """
+    Zero movers with a country filter set is nearly always a timing answer, not a
+    filter problem, so go and get the timing rather than guessing at it.
+
+    /v1/racing/events costs 1 credit and lists the next few hours. Naming the next
+    race in that country, and the time capture starts for it, is the difference
+    between "nothing is moving" and "nothing can be moving yet".
+    """
+    try:
+        events, _ = client.get("/v1/racing/events",
+                               {"country": args.country, "hours_ahead": 6,
+                                "include_unresolved": True})
+    except ApiError as exc:
+        print("  (could not read /v1/racing/events to check the timing: %s)" % exc)
+        return
+    if not isinstance(events, list):
+        events = events.get("races", [])
+    upcoming = sorted((e for e in events if e.get("start_time")),
+                      key=lambda e: e["start_time"])
+    if not upcoming:
+        print("  /v1/racing/events lists no %s race in the next 6 hours either." % args.country)
+        return
+    nxt = upcoming[0]
+    secs = _secs_until(nxt["start_time"])
+    when = "" if secs is None else "  (in %s)" % fmt_out(secs)
+    print("  /v1/racing/events (1 credit): %d %s race(s) in the next 6 hours. The next is"
+          % (len(upcoming), args.country))
+    print("  %s R%s, %s, jumping %s%s"
+          % (nxt.get("venue"), nxt.get("race_number"), nxt.get("category"),
+             nxt.get("start_time"), when))
+    if secs is not None and secs > 3600:
+        print("  - movers can only see it from about %s, 60 minutes out."
+              % _minus_an_hour(nxt["start_time"]))
+    if not args.include_unresolved:
+        print("  Secondary: a meeting that is not confirmed yet carries no country at all.")
+        print("  --include-unresolved includes those races.")
+
+
+def _secs_until(iso):
+    t = parse_iso(iso)
+    if t is None:
+        return None
+    return max(0.0, (t - datetime.now(timezone.utc)).total_seconds())
+
+
+def _minus_an_hour(iso):
+    t = parse_iso(iso)
+    if t is None:
+        return "60 minutes before the jump"
+    return (t - timedelta(seconds=3600)).strftime("%H:%M:%SZ")
 
 
 def render_movers(rows):
@@ -953,17 +1022,31 @@ def cmd_benchmark(args):
 
     Measures the same request two ways: a fresh TLS connection every call, and
     one connection held open. Reports the median of each.
+
+    The default target is addressed by venue + race_number + date rather than by
+    race_id, deliberately. The API documents race ids as resolving from the live
+    feed, which holds roughly the next six hours, and past races as addressed by
+    the venue key, which both the live store and the permanent archive resolve.
+    So the default should keep working after the sample race has aged out of the
+    live feed, where a hardcoded race id might not. Pass --race-id (or your own
+    --venue/--race-number/--date) to benchmark a different race.
     """
     key = os.environ.get("PE_API_KEY")
     if not key:
         sys.stderr.write("PE_API_KEY is not set; benchmark uses /v1/racing/price-history.\n")
         return 2
     path = "/v1/racing/price-history"
-    params = {"race_id": args.race_id, "max_points": 5000, "include_points": True}
+    params = {"max_points": 5000, "include_points": True}
+    if args.race_id:
+        params["race_id"] = args.race_id
+        target = args.race_id
+    else:
+        params.update({"venue": args.venue, "race_number": args.race_number, "date": args.date})
+        target = "%s R%s  %s" % (args.venue, args.race_number, args.date)
     n = max(3, args.n)
 
     print("endpoint  %s" % path)
-    print("race_id   %s" % args.race_id)
+    print("race      %s" % target)
     print("samples   %d per mode\n" % n)
 
     cold = []
@@ -1099,7 +1182,7 @@ def cmd_watch(args):
 def build_parser():
     p = argparse.ArgumentParser(
         prog="pricemove.py",
-        description="Track how Australian racing prices move between market open and the jump.",
+        description="Track how Australian racing prices move in the hour before the jump.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Free API key (1,500 credits/month, no card): %s" % SIGNUP)
     sub = p.add_subparsers(dest="cmd")
@@ -1128,8 +1211,11 @@ def build_parser():
 
     b = sub.add_parser("benchmark",
                        help="reproduce the README's gzip / connection-reuse figures")
-    b.add_argument("--race-id", default="b4b126d9-24a6-4121-9a92-b40dc389a74a",
-                   help="race to fetch repeatedly (default: the race in docs/)")
+    b.add_argument("--race-id", help="benchmark this race id instead of the default race")
+    b.add_argument("--venue", default="Hamilton",
+                   help="default target, addressed by venue+number+date so it does not age out")
+    b.add_argument("--race-number", type=int, default=8, help="see --venue")
+    b.add_argument("--date", default="2026-09-14", help="see --venue, YYYY-MM-DD (UTC)")
     b.add_argument("--n", type=int, default=5, help="samples per mode (default 5)")
     b.set_defaults(func=cmd_benchmark)
 

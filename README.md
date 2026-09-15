@@ -1,9 +1,19 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.svg">
+  <img alt="PuntersEdge API" src="docs/logo-light.svg" width="400">
+</picture>
+
 # Racing price movement tracker for Australian horse, harness and greyhound racing
 
-A single-file Python tool that shows how Australian racing prices moved between market
-open and the jump: which runners firmed, which drifted, by how much, and what the path
+A single-file Python tool that shows how Australian racing prices moved in the hour
+before the jump: which runners firmed, which drifted, by how much, and what the path
 looked like. It prints a per-runner open / close / high / low / move% table with a
 terminal sparkline, and writes a standalone SVG chart.
+
+That hour is not a design choice, it is the whole archive: the API begins capturing a
+race's prices about 60 minutes before it jumps, so `Open` means the first price seen in
+that window, not the market's opening price. Measured on nine races — see
+[Limitations](#limitations).
 
 Standard library only. No `pip install`, no matplotlib, no config file. One file,
 `pricemove.py`, runs on a bare `python3`. Prices come from the
@@ -30,14 +40,25 @@ so `watch` can only see movement that happens while it is running, and a race ho
 the jump barely moves. Run it while the Australian card is live. Asking the API for the
 next 24 hours on 2026-09-15 returned 208 Australian races — 138 greyhound, 41 harness,
 29 thoroughbred — running from 11:38 to 22:57 AEST, so that is the window worth polling
-in. Outside it you will watch a flat market: a three-minute run against a race an hour
-and a half out returns a table of `+0.00%` rows, correctly.
+in. Outside it you will watch a flat market: run 2026-09-15 00:13 UTC, 84 minutes before
+the first Australian race of the day, the command above gave nine polls, a handful of
+price changes and a table of `+0.00%` rows — correctly, because nothing had moved far
+enough over three minutes to change a consensus. That run is committed verbatim as
+section 1b of [`docs/output.txt`](docs/output.txt) so you can see the unimpressive
+version before you run it yourself.
 
 If you are reading this outside Australian racing hours, skip to
 [See a full race end to end, offline](#see-a-full-race-end-to-end-offline). This repo
 commits a real captured race you can render immediately, with no key and no network.
 
 ### Real output, keyless
+
+This transcript is a longer run than the three-minute headline command above — eleven
+minutes at a 25-second interval, to give a quiet market a chance to move:
+
+```sh
+python3 pricemove.py watch --interval 25 --minutes 11
+```
 
 Captured 2026-09-15 (AEST): 24 polls over 11 minutes, following an Angle Park greyhound
 race about two hours out from its jump. Real terminal output, with a contiguous run of
@@ -87,8 +108,9 @@ also wrote [`docs/demo-watch.svg`](docs/demo-watch.svg).
 ### See a full race end to end, offline
 
 Because `watch` is limited to what it observes live, this repo also commits a real
-captured series from a complete Australian race — every price from market open to the
-jump — so you can see the full output immediately with no network call at all:
+captured series covering the whole window the archive holds for one Australian race —
+the final 60 minutes before the jump — so you can see the full output immediately with
+no network call at all:
 
 ```sh
 python3 pricemove.py render docs/hamilton-r8.json
@@ -104,10 +126,12 @@ race_id   b4b126d9-24a6-4121-9a92-b40dc389a74a
 jump      2026-09-14T07:00:00Z
 window    from 60m to 9s before the jump  (60m observed)
 source    /v1/racing/price-history (keyed, 5 credits)
+note      capture begins 60 min before the jump, so Open is the first
+          price seen in that window, not the market's opening price
 points    1105
 
-#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (open -> jump)
------------------------------------------------------------------------------------------------------------------
+#   Runner           Bk    Open  Close   High    Low    Move%  Dir      Path (60m -> jump)
+----------------------------------------------------------------------------------------------------------------
 11  Frosty Night     14   23.00  34.00  41.00  21.00   +47.83  drifting ▂▂▄▄▄▄▄▄▄▄▄▄▄▄▁▂▂▂▂▂▂▁▁▁▆▄▄▄▄▃▂▇▆█▄▄▄▆██
 1   Strongside       14   10.00  14.00  15.00   9.00   +40.00  drifting ▂▂▄▂▂▂▂▂▂▂▂▂▂▂▄▄▄▄▄▄▄▂▂▁▂▄▂▂▂▂▂▂▂▄▂▄▄▅██
 12  State Of Maine   14   16.00  22.00  26.00  15.00   +37.50  drifting ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▂▂▂▂▄▄▃▃▄▄▅▆▅▄▆▆███
@@ -132,7 +156,8 @@ points    1105
 **median** across bookmakers rather than the mean, so one book posting an outlier does
 not drag the row. Negative means the price shortened (firmed); positive means it
 lengthened (drifted). The sparkline is the median price across books, bucketed onto a
-shared seconds-to-jump grid, reading left (market open) to right (the jump).
+shared seconds-to-jump grid, reading left (60 minutes out, where capture starts) to
+right (the jump).
 
 The same command writes the chart below with `--svg`:
 
@@ -161,6 +186,7 @@ export PE_API_KEY="your_key_here"
 | `watch` | `/v1/demo/racing/next-to-go` | 0 | polls the keyless demo, builds its own series |
 | `render` | none (local file) | 0 | re-renders a saved series offline |
 | `scan` | `/v1/racing/movers` | 3 per poll | the server's own firming/drifting scan across live races |
+| | `/v1/racing/events` | 1, once per run | only if a country-filtered poll comes back empty, to say when the window opens |
 | `race` | `/v1/racing/price-history` | 5 per race | full open/close/high/low/move% per runner and book |
 | `benchmark` | `/v1/racing/price-history` | 5 per call | re-measures the latency and gzip figures below |
 
@@ -174,13 +200,15 @@ Scan live races, then pull the full history for one that interests you:
 # what is moving right now on the Australian card
 python3 pricemove.py scan --country AU --min-move-pct 5 --min-books 3
 
-# poll it on a schedule: 20 polls, one every 3 minutes (60 credits)
+# poll it on a schedule: 20 polls, one every 3 minutes (60 credits, +1 if the
+# first poll comes back empty and the tool goes to check the timing)
 python3 pricemove.py scan --country AU --repeat 20 --interval 180
 
 # the full history for one race, with a chart and a saved series
 python3 pricemove.py race --race-id <race_id> --svg chart.svg --json series.json
 
-# or address a race by name instead of id
+# or address a race by name instead of id - the API documents the venue key as
+# the way to reach a past race, since race ids resolve from the live feed
 python3 pricemove.py race --venue Hamilton --race-number 8 --date 2026-09-14
 ```
 
@@ -200,9 +228,13 @@ prints as `f/d/u` so you can see how broad the move was. Bounds that will 422 yo
 `min_move_pct` 1–90, `min_books` 1–12, `max_mins_to_jump` 5–360, `limit` 1–200.
 
 **`/v1/racing/price-history`** (`race`) is the detailed view: every runner, every
-bookmaker, with `open_price`, `close_price`, `high`, `low`, `move_pct`, `points_count`
-and the raw `points` array of `{win_price, secs_to_jump, captured_at}`. `max_points` must
-be at least 100; the response sets `truncated: true` if it hit your cap.
+bookmaker, with `open_price`, `close_price`, `high`, `low`, `move_pct`, `points_count`,
+`open_secs_to_jump`, `close_secs_to_jump`, `open_is_baseline`, and the raw `points` array
+of `{win_price, secs_to_jump, captured_at}`. The series is change-only — a point is a
+price *move*, not a sample, so a gap means the price held. `max_points` must be at least
+100; the response sets `truncated: true` if it hit your cap. Read `open_is_baseline`
+before treating a book's `open_price` as an hour-out price: it is the first price that
+book posted, whenever that was.
 
 **`/v1/demo/racing/next-to-go`** (`watch`) is keyless and costs nothing.
 
@@ -236,10 +268,37 @@ Australian runner in twelve rows. Always pass `country=AU` — the tool defaults
 or you will publish North American and Japanese races under an "Australian racing"
 heading.
 
-**But `country=AU` alone can silently return nothing.** Most of an Australian card has an
-unresolved country until the meeting is confirmed, and those races are excluded by
-default. When `scan` gets zero rows with a country filter set it says so and tells you to
-retry with `--include-unresolved` rather than leaving you to assume the market is quiet.
+**But `country=AU` returns nothing until the card is inside the capture window.** This is
+the one that cost this build an hour. `/v1/racing/movers` compares each runner's current
+price against a *captured* opening line, and capture only begins about 60 minutes before
+the jump — so a race four hours out has no opening line to be compared against, and
+cannot be a mover at any threshold. Measured 2026-09-15 00:14 UTC: the loosest scan
+the API accepts, `--country AU --min-move-pct 1 --min-books 1`, returned 0 rows, and
+returned 0 again with `--include-unresolved` added, while `/v1/racing/events` listed 69
+Australian races in the next six hours — every one of them already carrying
+`country: "AU"`, and the nearest still 84 minutes from jumping. Zero movers was the
+correct answer, not a filter mistake.
+
+A bare `0 movers` is indistinguishable from a broken filter, so when a country filter is
+set and nothing comes back, `scan` spends one more credit on `/v1/racing/events` and
+tells you when the window actually opens:
+
+```
+[00:13:58Z] 0 movers  ·  242 ms  ·  1 call, 3 credits (remaining: unlimited)
+  No rows. /v1/racing/movers compares the current price against a captured
+  opening line, and capture only begins about 60 minutes before the jump, so a
+  country=AU card with no race inside that window has no mover to report, at
+  any threshold.
+  /v1/racing/events (1 credit): 69 AU race(s) in the next 6 hours. The next is
+  Angle Park R1, greyhound, jumping 2026-09-15T01:38:00Z  (in 1.4h)
+  - movers can only see it from about 00:38:00Z, 60 minutes out.
+  Secondary: a meeting that is not confirmed yet carries no country at all.
+  --include-unresolved includes those races.
+```
+
+That secondary reason is real and documented by the API — an unconfirmed meeting carries
+no country, and `country=AU` drops it — but it was not the cause of a single empty scan
+in this build, which is why it is the last line of the hint rather than the first.
 
 **The demo endpoint wraps its payload; the keyed endpoints do not.** `/v1/demo/*` returns
 `{"demo":…, "note":…, "shape":…, "races":[…]}`. `/v1/racing/next-to-go` returns a bare
@@ -258,26 +317,39 @@ like a market holding firm when it is really just one sample.
 
 **gzip and connection reuse are worth the four lines.** The tool sends
 `Accept-Encoding: gzip` and holds one `http.client.HTTPSConnection` open across every
-call in a run. Fetching the same Hamilton R8 history five times each way, 2026-09-14
-23:34 UTC:
+call in a run. Fetching the same Hamilton R8 history five times each way, 2026-09-15
+00:08 UTC:
 
 | | median latency |
 | --- | --- |
-| new TLS connection per call | 198 ms |
-| one connection reused | 96 ms |
+| new TLS connection per call | 305 ms |
+| one connection reused | 156 ms |
 
-That response was 9,458 bytes on the wire and 142,928 decompressed — 15.1x. Do not take
-either number on trust; the measurement is a mode of the tool, so re-run it yourself:
+The absolute numbers are a property of your network, not of the API: the same benchmark
+run nine hours earlier from the same machine gave 198 ms and 96 ms. The ratio is the
+part that held — roughly 2x either time. What did not move at all is the compression:
+both runs reported the same response at 9,458 bytes on the wire and 142,928 decompressed,
+15.1x. Do not take any of it on trust; the measurement is a mode of the tool, so re-run
+it yourself:
 
 ```sh
 python3 pricemove.py benchmark        # 11 calls, 55 credits
 ```
 
+`benchmark` addresses its default race by venue + race number + date rather than by
+`race_id`, deliberately: the API documents race ids as resolvable from the live feed,
+which holds about the next six hours, while the venue key resolves in the permanent
+archive too. So the command above should keep working long after the sample race has
+left the live feed — which a hardcoded race id might not.
+
 **No silent retries on price endpoints.** A hidden retry can hand you a price recorded
-before a move, which is worse than an error. The client never retries a response it
-actually received — no 5xx retry, no 4xx retry. It reconnects exactly once when a
-*reused* keep-alive connection was dropped before any response byte arrived, and says so
-on stderr when it does.
+before a move, which is worse than an error. The client never retries a response that
+carried data: no 5xx retry, and no 4xx retry other than 429. A 429 is the one exception
+precisely because it carries no price at all — the request was refused, nothing was
+recorded — so it is backed off and retried up to four times, honouring `Retry-After`
+when that header is a number. The client also reconnects exactly once when a *reused*
+keep-alive connection was dropped before any response byte arrived, and says so on
+stderr when it does.
 
 ## What price movement does and does not tell you
 
@@ -290,10 +362,10 @@ competitor, reacting to a scratching, adjusting for a promotion, or correcting a
 A shortening price and a runner's actual chance are different things, and the gap between
 them is not something this tool measures or could measure.
 
-What the data honestly supports is descriptive work. You can see when a market opened,
-how wide the books were at open versus at the jump, which books moved first and which
-followed, how much of a move was one outlier against a broad repricing, and how far a
-consensus travelled over an hour. That is a reasonable input to research, a market
+What the data honestly supports is descriptive work. You can see which book was quoting
+first inside the capture window, how wide the books were an hour out versus at the jump,
+which books moved first and which followed, how much of a move was one outlier against a
+broad repricing, and how far a consensus travelled over that hour. That is a reasonable input to research, a market
 monitor, a data-quality check, or a dashboard. It is not a forecast, and a table of
 past movement says nothing about the next race.
 
@@ -302,8 +374,22 @@ past movement says nothing about the next race.
 - **`watch` cannot see the past.** The demo endpoint is a snapshot. Movement that
   happened before you started polling is invisible to it. Only the keyed
   `/v1/racing/price-history` has the archive.
-- **`scan` only sees live races.** `max_mins_to_jump` caps at 360, so it is forward-looking
-  by design. There is no way to scan for movers on a race that has already jumped.
+- **History is the last 60 minutes only.** `/v1/racing/price-history` begins capturing
+  about an hour before the jump, so `Open` is the first price observed inside that
+  window, not the market's opening price, and nothing earlier exists at any plan.
+  Measured on nine races across horse, harness and greyhound, jumping between
+  2026-09-09 and 2026-09-14: every one returned a window of 3,596–3,599 seconds — 59.9
+  to 60.0 minutes — with `truncated: false`. Eight of those nine are printed by the tool
+  in [`docs/output.txt`](docs/output.txt) under section 2c. Per book the window is often
+  shorter still: the API reports `open_secs_to_jump` and `open_is_baseline` per series
+  precisely because a book that starts quoting 20 minutes out has an `open` 20 minutes
+  out.
+- **`scan` only sees races inside that same window.** `max_mins_to_jump` accepts up to
+  360, but a mover needs a captured opening line to be measured against, so in practice
+  nothing is returned beyond about 60 minutes to the jump — every mover seen across this
+  build's scans was between 9 and 54 minutes out, and not one was over an hour. It is
+  also forward-only: there is no way to scan for movers on a race that has already
+  jumped.
 - **This repo does not build on `/v1/racing/closing-lines`.** That endpoint is plan-gated
   and returns 403 on the free tier, so an example built on it would fail for exactly the
   readers this repo is written for. `/v1/racing/price-history` is the free-tier
@@ -318,7 +404,7 @@ past movement says nothing about the next race.
   price or traded volume anywhere in this tool.
 - **Bookmaker coverage varies race to race.** Hamilton R8 had all 14 books; a small
   midweek meeting may have far fewer. Check the live
-  [coverage report](https://puntersedge.online/coverage-report?utm_source=racing-price-movement-tracker&utm_medium=readme)
+  [coverage report](https://puntersedge.online/coverage-report.json?utm_source=racing-price-movement-tracker&utm_medium=readme)
   rather than trusting a number hardcoded in a README.
 - **No results, no form, no settlement.** This tool reads prices only. It does not know
   which runner won, and deliberately does not join movement to outcome.
@@ -339,7 +425,8 @@ python3 pricemove.py scan   [--country AU] [--include-unresolved] [--min-move-pc
                             [--repeat 1] [--interval 120]
 python3 pricemove.py race   (--race-id ID | --venue V --race-number N --date YYYY-MM-DD)
                             [--books tab,sportsbet] [--max-points 5000]
-python3 pricemove.py benchmark [--race-id ID] [--n 5]
+python3 pricemove.py benchmark [--race-id ID | --venue V --race-number N --date D]
+                               [--n 5]
 ```
 
 Shared by `watch`, `render` and `race`: `--svg PATH`, `--svg-runners 6`, `--json PATH`,
