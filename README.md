@@ -391,7 +391,9 @@ past movement says nothing about the next race.
   in [`docs/output.txt`](docs/output.txt) under section 2c. Per book the window is often
   shorter still: the API reports `open_secs_to_jump` and `open_is_baseline` per series
   precisely because a book that starts quoting 20 minutes out has an `open` 20 minutes
-  out.
+  out. Both fields survive into the saved JSON — on the committed Hamilton R8 sample,
+  155 of 166 runner-book series carry `open_is_baseline: true`, so eleven of them began
+  later than the hour mark.
 - **`scan` only sees races inside that same window.** `max_mins_to_jump` accepts up to
   360, but a mover needs a captured opening line to be measured against, so in practice
   nothing is returned beyond about 60 minutes to the jump — every mover seen across this
