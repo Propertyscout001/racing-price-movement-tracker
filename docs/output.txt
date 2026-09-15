@@ -467,11 +467,12 @@ gzip: 9,458 bytes on the wire -> 142,928 bytes decompressed (15.1x)
 
 This run: 2026-09-15 00:08 UTC
 
-(The same command 9 hours earlier, on the previous day's network, gave 198.3 ms
-cold and 96.2 ms warm. The absolute latency is a property of the link, not the
-API; the ~2x ratio and the 15.1x compression held across both runs. Note that
-benchmark addresses its default race by venue + race number + date, not race_id,
-so it should keep working after the sample race leaves the live feed.)
+(The same command 34 minutes earlier, at 2026-09-14 23:34 UTC, gave 198.3 ms cold
+and 96.2 ms warm on this same machine. The absolute latency belongs to the link at
+that moment, not to the API; the ~2x ratio and the 15.1x compression held across
+both runs. Note that benchmark addresses its default race by venue + race number
++ date, not race_id, so it should keep working after the sample race leaves the
+live feed.)
 
 ========================================================================
 5. ERROR HANDLING

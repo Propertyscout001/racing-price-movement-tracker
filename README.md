@@ -334,11 +334,10 @@ call in a run. Fetching the same Hamilton R8 history five times each way, 2026-0
 | new TLS connection per call | 305 ms |
 | one connection reused | 156 ms |
 
-The absolute numbers are a property of your network, not of the API: the same benchmark
-run nine hours earlier from the same machine gave 198 ms and 96 ms. The ratio is the
-part that held — roughly 2x either time. What did not move at all is the compression:
-both runs reported the same response at 9,458 bytes on the wire and 142,928 decompressed,
-15.1x. Do not take any of it on trust; the measurement is a mode of the tool, so re-run
+The absolute numbers belong to the link at that moment, not to the API: the same
+benchmark 34 minutes earlier, on the same machine, gave 198 ms and 96 ms. What held
+across both runs is the ratio — roughly 2x — and the compression: both reported the same
+response at 9,458 bytes on the wire and 142,928 decompressed, 15.1x. Do not take any of it on trust; the measurement is a mode of the tool, so re-run
 it yourself:
 
 ```sh
